@@ -64,6 +64,11 @@ namespace StingrayExplorer
 			}
 		}
 
+		public string ToHex()
+		{
+			return Hash.ToString("X").ToLower();
+		}
+
 		public static bool operator==(Hash64 lhs, Hash64 rhs) { return lhs.Hash == rhs.Hash; }
 		public static bool operator!=(Hash64 lhs, Hash64 rhs) { return lhs.Hash != rhs.Hash; }
 		public static bool operator ==(Hash64 lhs, ulong rhs) { return lhs.Hash == rhs; }

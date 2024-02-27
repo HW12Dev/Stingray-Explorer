@@ -1,5 +1,5 @@
 audio_extract
-gameextract
+game_extract
 bin
 
 convert_all_wwise.py

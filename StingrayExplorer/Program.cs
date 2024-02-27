@@ -9,13 +9,14 @@ namespace StingrayExplorer
 		static string testfile = @"X:\SteamLibrary\steamapps\common\Helldivers 2\data\2e24ba9dd702da5c";
 		static string helldivers = @"X:\SteamLibrary\steamapps\common\Helldivers 2\data\";
 
-		static string outdir = @"X:\Projects\StingrayExplorer\gameextract\";
+		static string outdir = @"X:\Projects\Stingray-Explorer\game_extract\";
 
 		static void Main(string[] args)
 		{
 			Hash64.LoadHashlist("hashlist.txt");
 
-			//Console.WriteLine(new Hash64("wwise_bank").Hash);
+			Console.WriteLine(new Hash64("content/audio/streamed").ToHex());
+			Console.WriteLine(0x3cfd61f81a6c2b3d);
 			
 			
 			//Console.WriteLine(0x1a0e932d2c7e46a1);
@@ -32,7 +33,9 @@ namespace StingrayExplorer
 
 
 			List<StingrayHeaderFile> headers = new List<StingrayHeaderFile>();
-			headers.Add(new StingrayHeaderFile().Read(new BinaryReader(File.OpenRead(testfile)), testfile));
+			//headers.Add(new StingrayHeaderFile().Read(new BinaryReader(File.OpenRead(testfile)), testfile));
+			string test2 = @"X:\SteamLibrary\steamapps\common\Helldivers 2\data\094394c2a2c22f36";
+			headers.Add(new StingrayHeaderFile().Read(new BinaryReader(File.OpenRead(test2)), test2));
 			/*foreach (var file in Directory.GetFiles(helldivers))
 			{
 				if (file.Contains(".")) continue;
@@ -58,26 +61,26 @@ namespace StingrayExplorer
 			{
 				Console.WriteLine(String.Format("{0}: {1}", new Hash64(extension.Key), extension.Value));
 			}
-			/*foreach(var header in headers)
-			{
-				foreach(var file in header.FileEntries)
-				{
-					if(file.path == new Hash64(0x4bd6f15b725a604d))
-					{
-						Console.WriteLine(header.File);
-					}
-				}
-			}*/
-			
-			/*int extracted = 0;
 			foreach(var header in headers)
 			{
 				foreach(var file in header.FileEntries)
 				{
-					if(file.size == 0) continue;
+					if(file.path == new Hash64(0x3cfd61f81a6c2b3d) && file.extension == "texture")
+					{
+						Console.WriteLine(header.File);
+					}
+				}
+			}
 
-					BinaryReader br = new BinaryReader(File.OpenRead(file.streamfile));
-					br.BaseStream.Position = file.offset;
+			//return;
+			
+			int extracted = 0;
+			foreach(var header in headers)
+			{
+				foreach(var file in header.FileEntries)
+				{
+					//BinaryReader br = new BinaryReader(File.OpenRead(file.streamfile));
+					//br.BaseStream.Position = file.offset;
 
 					if (file.path.ToString().Contains("/")) {
 						string[] folder_path_arr = file.path.ToString().Split('/');
@@ -95,11 +98,18 @@ namespace StingrayExplorer
 					string outfile = file.path.ToString() + "." + file.extension.ToString();
 
 
-					File.WriteAllBytes(outdir + outfile, br.ReadBytes((int)file.size));
-					br.Close();
+					{
+						BinaryWriter bw = new BinaryWriter(File.OpenWrite(outdir + outfile));
+						header.WriteAsset(file, bw);
+						bw.Close();
+						bw = null;
+					}
+
+					//File.WriteAllBytes(outdir + outfile, br.ReadBytes((int)file.size));
+					//br.Close();
 					extracted++;
 				}
-			}*/
+			}
 
 			//Console.WriteLine(String.Format("Extracted {0} files from {1}", extracted, helldivers));
 
