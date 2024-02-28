@@ -171,11 +171,12 @@ namespace StingrayExplorer
 			//Console.WriteLine();
 			// Process Misc Data first
 
-			if(entry.path == 0x3cfd61f81a6c2b3d)
+			/*if(entry.path == 0x3cfd61f81a6c2b3d)
 			{
 				System.Diagnostics.Debugger.Break();
-			}
+			}*/
 
+			try
 			{
 				BinaryReader br = new BinaryReader(System.IO.File.OpenRead(File));
 				br.BaseStream.Position = entry.MiscDataOffset + 4;
@@ -184,6 +185,17 @@ namespace StingrayExplorer
 				{
 					br.BaseStream.Position += 188;
 					extradata = br.ReadBytes(160);
+				} else if(entry.extension == "package")
+				{
+					br.BaseStream.Position += 4;
+					int count = br.ReadInt32();
+					br.BaseStream.Position += 4;
+					extradata = br.ReadBytes(count*16);
+				} else if (entry.extension == "hash_lookup")
+				{
+					br.BaseStream.Position -= 4;
+					int size = br.ReadInt32();
+					extradata = br.ReadBytes(size);
 				} else
 				{
 					extradata = br.ReadBytes(br.ReadInt32());
@@ -194,7 +206,8 @@ namespace StingrayExplorer
 				Array.Clear(extradata, 0, extradata.Length);
 				extradata = null;
 
-				if ((entry.source_location & (int)HeaderFileEntry.SourceLocation.GPU_RESOURCES) != 0) {
+				if ((entry.source_location & (int)HeaderFileEntry.SourceLocation.GPU_RESOURCES) != 0)
+				{
 					BinaryReader br_gpu = new BinaryReader(new BufferedStream(System.IO.File.OpenRead(File + ".gpu_resources")));
 					br_gpu.BaseStream.Position = entry.gpu_offset;
 					bw.Write(br_gpu.ReadBytes((int)entry.gpu_size));
@@ -202,7 +215,8 @@ namespace StingrayExplorer
 					br_gpu.Dispose();
 					br_gpu = null;
 				}
-				if((entry.source_location & (int)HeaderFileEntry.SourceLocation.STREAM) != 0) {
+				if ((entry.source_location & (int)HeaderFileEntry.SourceLocation.STREAM) != 0)
+				{
 					BinaryReader br_stream = new BinaryReader(new BufferedStream(System.IO.File.OpenRead(File + ".stream")));
 					br_stream.BaseStream.Position = entry.stream_offset;
 					bw.Write(br_stream.ReadBytes((int)entry.stream_size));
@@ -212,7 +226,7 @@ namespace StingrayExplorer
 				}
 
 				br.Close();
-			}
+			} catch (Exception e) { }
 			GC.Collect();
 			return true;
 		}

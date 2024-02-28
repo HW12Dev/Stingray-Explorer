@@ -15,7 +15,7 @@ namespace StingrayExplorer
 		{
 			Hash64.LoadHashlist("hashlist.txt");
 
-			Console.WriteLine(new Hash64("content/audio/streamed").ToHex());
+			Console.WriteLine(new Hash64("hash_lookup").Hash);
 			Console.WriteLine(0x3cfd61f81a6c2b3d);
 			
 			
@@ -34,8 +34,9 @@ namespace StingrayExplorer
 
 			List<StingrayHeaderFile> headers = new List<StingrayHeaderFile>();
 			//headers.Add(new StingrayHeaderFile().Read(new BinaryReader(File.OpenRead(testfile)), testfile));
-			string test2 = @"X:\SteamLibrary\steamapps\common\Helldivers 2\data\094394c2a2c22f36";
-			headers.Add(new StingrayHeaderFile().Read(new BinaryReader(File.OpenRead(test2)), test2));
+			//string test2 = @"X:\SteamLibrary\steamapps\common\Helldivers 2\data\094394c2a2c22f36";
+			//headers.Add(new StingrayHeaderFile().Read(new BinaryReader(File.OpenRead(test2)), test2));
+			headers.Add(new StingrayHeaderFile().Read(new BinaryReader(File.OpenRead(@"X:\SteamLibrary\steamapps\common\Helldivers 2\data\9ba626afa44a3aa3")), @"X:\SteamLibrary\steamapps\common\Helldivers 2\data\9ba626afa44a3aa3"));
 			/*foreach (var file in Directory.GetFiles(helldivers))
 			{
 				if (file.Contains(".")) continue;
@@ -65,12 +66,15 @@ namespace StingrayExplorer
 			{
 				foreach(var file in header.FileEntries)
 				{
-					if(file.path == new Hash64(0x3cfd61f81a6c2b3d) && file.extension == "texture")
+					if(file.path == new Hash64(0x1a1afcb642800827) && file.extension == "package")
 					{
-						Console.WriteLine(header.File);
+						//Console.WriteLine(file.path.Hash);
+						//Console.WriteLine(header.File);
 					}
 				}
 			}
+
+			//return;
 
 			//return;
 			
@@ -99,6 +103,7 @@ namespace StingrayExplorer
 
 
 					{
+						outfile = outfile.Replace(":", "_colon_");
 						BinaryWriter bw = new BinaryWriter(File.OpenWrite(outdir + outfile));
 						header.WriteAsset(file, bw);
 						bw.Close();
@@ -111,7 +116,7 @@ namespace StingrayExplorer
 				}
 			}
 
-			//Console.WriteLine(String.Format("Extracted {0} files from {1}", extracted, helldivers));
+			Console.WriteLine(String.Format("Extracted {0} files from {1}", extracted, helldivers));
 
 			/*BinaryReader br = new BinaryReader(File.OpenRead(testfile));
 			var header = new StingrayHeaderFile().Read(br, testfile);
