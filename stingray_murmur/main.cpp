@@ -1,6 +1,8 @@
 #include <Windows.h>
 #include <stdint.h>
 
+// https://bitsquid.blogspot.com/2011/08/code-snippet-murmur-hash-inverse-pre.html
+
 unsigned int murmur_hash(const void* key, int len, unsigned int seed)
 {
   // 'm' and 'r' are mixing constants generated offline.
